@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f68b1e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Leo Mall">
+<title>Leo Online Mall</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:system-ui,sans-serif;background:#f1f1f2;color:#222}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+header{position:sticky;top:0;z-index:5;background:#f68b1e;padding:10px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.logo{font-weight:800;font-size:19px;color:#fff;flex:1;min-width:0}
+.hi{display:flex;gap:6px}
+#q{order:3;flex:1 1 100%;padding:10px 12px;border:0;border-radius:8px}
+.ib{background:#fff;border-radius:8px;padding:9px 10px;position:relative}
+.ib i{position:absolute;top:-6px;right:-6px;background:#d11;color:#fff;font-style:normal;font-size:11px;border-radius:10px;padding:1px 6px}
+.ib i.blue{background:#2563eb;display:none;align-items:center;justify-content:center;min-width:18px;height:18px}
+.util{display:flex;background:#fff;border-bottom:1px solid #eee}
+.util button{flex:1;background:none;padding:10px 4px;font-size:13px;color:#444}
+.cats{display:flex;gap:8px;overflow:auto;padding:10px 12px;background:#fff}
+.cats button{background:#f1f1f2;padding:8px 14px;border-radius:18px;white-space:nowrap}
+.cats .on{background:#f68b1e;color:#fff}
+main{max-width:1000px;margin:auto;padding:12px}
+.banner{height:150px;border-radius:12px;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:20px;color:#fff;opacity:0;transition:.6s}
+.slide.on{opacity:1}
+.slide h2{margin:0 0 6px;font-size:22px}
+.flash{display:flex;justify-content:space-between;align-items:center;background:#d11;color:#fff;border-radius:10px;padding:10px 14px;margin:12px 0}
+.tools{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+select{padding:8px;border-radius:8px;border:1px solid #ccc}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}}
+.card{background:#fff;border-radius:10px;overflow:hidden;position:relative}
+.pic{height:140px;display:grid;place-items:center;font-size:56px;cursor:pointer;position:relative;overflow:hidden}
+.pic img,.th img,.big-e img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.off{position:absolute;top:6px;left:6px;z-index:2;background:#fde3c3;color:#f68b1e;font-size:12px;font-weight:700;padding:2px 6px;border-radius:6px}
+.heart{position:absolute;top:6px;right:6px;z-index:3;background:#fff;border-radius:50%;width:30px;height:30px}
+.info{padding:8px}
+.nm{font-size:13px;height:34px;overflow:hidden}
+.pr{font-weight:700;margin-top:4px}
+s{color:#888;font-size:12px}
+.st{color:#f68b1e;font-size:12px;margin:2px 0 6px}
+.btn{background:#f68b1e;color:#fff;border-radius:8px;padding:9px;width:100%;font-weight:600}
+.btn.big{margin-top:10px;padding:13px}
+.btn.alt{background:#eee;color:#222}
+.lnk{display:block;text-align:center;text-decoration:none}
+.mut{color:#777;font-size:13px}
+#ov{position:fixed;inset:0;background:#0007;z-index:10;display:none;align-items:flex-end;justify-content:center}
+#ov.show{display:flex}
+#sheet{background:#fff;width:100%;max-width:600px;max-height:90vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sh h3{margin:0}
+.x{background:#eee;border-radius:8px;padding:8px 12px}
+.row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
+.th{width:70px;height:70px;border-radius:10px;display:grid;place-items:center;font-size:32px;flex:none;position:relative;overflow:hidden}
+.g{flex:1}
+.qty{display:flex;gap:6px;align-items:center;margin-top:4px}
+.qty button{background:#eee;border-radius:6px;width:30px;height:30px}
+.tot{padding:10px 0}
+.tot div{display:flex;justify-content:space-between;padding:3px 0}
+.cp{display:flex;gap:6px}
+.cp input,.f input,.f select{flex:1;width:100%;padding:11px;border:1px solid #ccc;border-radius:8px;margin:5px 0}
+.cp .btn{width:auto;padding:0 16px}
+.big-e{height:260px;font-size:90px;display:grid;place-items:center;border-radius:12px;margin-bottom:8px;position:relative;overflow:hidden}
+.thumbs{display:flex;gap:8px;margin-bottom:10px}
+.thumbs img{width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid #eee}
+.tag{display:inline-block;background:#e6f6e6;color:#1a7f1a;font-size:12px;padding:2px 8px;border-radius:6px}
+.ord{background:#f7f7f7;border-radius:10px;padding:10px;margin:8px 0;font-size:14px}
+.ord .btn{margin-top:8px;padding:8px}
+/* tracking timeline */
+.tl{list-style:none;margin:14px 0;padding:0}
+.tl li{position:relative;padding:0 0 18px 30px;color:#999}
+.tl li:before{content:"";position:absolute;left:6px;top:4px;width:12px;height:12px;border-radius:50%;background:#ccc}
+.tl li:after{content:"";position:absolute;left:11px;top:16px;bottom:-2px;width:2px;background:#ddd}
+.tl li:last-child:after{display:none}
+.tl li.done{color:#222}
+.tl li.done:before,.tl li.done:after{background:#1a7f1a}
+.tl li.now:before{box-shadow:0 0 0 4px #1a7f1a33}
+.tl small{display:block;color:#888}
+/* inbox chat */
+#thread{max-height:46vh;overflow:auto;padding:4px 0}
+.bub{max-width:82%;padding:8px 12px;border-radius:14px;margin:6px 0;font-size:14px;line-height:1.4}
+.bub small{display:block;font-size:10px;opacity:.7;margin-top:3px}
+.bub.me{background:#f68b1e;color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.bub.sup{background:#eee;border-bottom-left-radius:4px}
+.bub.sys{background:#e0ecff;border-bottom-left-radius:4px}
+.bub button{margin-top:6px;background:#2563eb;color:#fff;border-radius:6px;padding:5px 10px;font-size:12px}
+.chips{display:flex;gap:6px;overflow:auto;margin:8px 0}
+.chips button{background:#fde3c3;color:#a35a00;border-radius:16px;padding:7px 12px;white-space:nowrap;font-size:12px}
+details{background:#f7f7f7;border-radius:10px;padding:10px;margin:6px 0;font-size:14px}
+summary{font-weight:600;cursor:pointer}
+/* footer */
+footer{background:#222;color:#ccc;margin-top:24px;padding:24px 16px 30px}
+.fg{max-width:1000px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(min-width:650px){.fg{grid-template-columns:repeat(3,1fr)}}
+footer h5{color:#fff;margin:0 0 10px;font-size:14px}
+footer .fl{display:block;background:none;color:#ccc;padding:5px 0;text-align:left;font-size:13px;text-decoration:none}
+footer .fc{grid-column:1/-1}
+@media(min-width:650px){footer .fc{grid-column:auto}}
+.copy{max-width:1000px;margin:20px auto 0;border-top:1px solid #444;padding-top:14px;text-align:center;font-size:12px;color:#999}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:20px;z-index:20;display:none;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">🛍️ Leo Online Mall</span>
+  <div class="hi">
+    <button class="ib" onclick="openNotes()" aria-label="Notifications">🔔<i id="nd" class="blue">0</i></button>
+    <button class="ib" onclick="openInbox()" aria-label="Inbox">📩<i id="md" class="blue">0</i></button>
+    <button class="ib" onclick="openAcct()" aria-label="Account">👤</button>
+    <button class="ib" onclick="openWish()" aria-label="Wishlist">🤍<i id="wc">0</i></button>
+    <button class="ib" onclick="openCart()" aria-label="Cart">🛒<i id="cc">0</i></button>
+  </div>
+  <input id="q" placeholder="Search products...">
+</header>
+<div class="util">
+  <button onclick="openTrack()">📦 Track Order</button>
+  <button onclick="openHelp()">💬 Help &amp; Contact</button>
+  <button onclick="openInbox()">📩 Inbox</button>
+</div>
+<div class="cats" id="cats"></div>
+<main>
+  <div class="banner" id="banner"></div>
+  <div class="flash"><b>⚡ Flash Sale</b><span>Ends in <b id="cd">--:--:--</b></span></div>
+  <div class="tools">
+    <b id="count"></b>
+    <select id="sort">
+      <option value="rel">Relevance</option>
+      <option value="lo">Price: low to high</option>
+      <option value="hi">Price: high to low</option>
+      <option value="rt">Top rated</option>
+      <option value="dc">Biggest discount</option>
+    </select>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <div class="fg">
+    <div>
+      <h5>Customer Service</h5>
+      <button class="fl" onclick="openHelp()">Help Center</button>
+      <button class="fl" onclick="openHelp()">Contact Us</button>
+      <button class="fl" onclick="openTrack()">Track My Order</button>
+      <button class="fl" onclick="info('returns')">Returns &amp; Refunds</button>
+      <button class="fl" onclick="info('delivery')">Delivery Info</button>
+      <button class="fl" onclick="info('payment')">Payment Options</button>
+    </div>
+    <div>
+      <h5>Leo Online Mall</h5>
+      <button class="fl" onclick="info('about')">Who we are</button>
+      <button class="fl" onclick="info('sell')">Sell on Leo Mall</button>
+      <button class="fl" onclick="installApp()">📲 Install our app</button>
+      <button class="fl" onclick="openNotes()">Notifications</button>
+      <button class="fl" onclick="scrollTo({top:0,behavior:'smooth'})">⬆ Back to top</button>
+    </div>
+    <div class="fc">
+      <h5>Contact Us</h5>
+      <div id="fc"></div>
+    </div>
+  </div>
+  <div class="copy" id="copy"></div>
+</footer>
+
+<div id="ov" onclick="if(event.target===this)closeP()">
+  <div id="sheet"><div class="sh"><h3 id="pt"></h3><button class="x" onclick="closeP()">✕</button></div><div id="pb"></div></div>
+</div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ======= EDIT THESE: your real customer service details ======= */
+const CONFIG={
+  phone:"+234 800 000 0000",
+  whatsapp:"2348000000000",      /* digits only, with country code */
+  email:"support@leomall.com",
+  hours:"Mon–Sat, 8am–6pm",
+  address:"Lagos, Nigeria"
+};
+
+/* To use your own photos, add  img:"images/phone.jpg"  to any product */
+const P=[
+{id:1,name:"Smartphone 128GB",cat:"Phones",price:185000,old:230000,e:"📱",bg:"#dbeafe",k:"smartphone",r:4.5,stock:8,opts:["Black","Blue"],d:"6.5-inch display, 128GB storage, dual camera, long-lasting battery."},
+{id:2,name:"Wireless Earbuds",cat:"Electronics",price:12500,old:20000,e:"🎧",bg:"#ede9fe",k:"earbuds",r:4,stock:25,opts:["White","Black"],d:"Bluetooth 5.3, noise reduction, 20-hour battery with case."},
+{id:3,name:"Men's Sneakers",cat:"Fashion",price:18000,old:27000,e:"👟",bg:"#fee2e2",k:"sneakers",r:4,stock:15,opts:["40","41","42","43","44"],d:"Lightweight, breathable sneakers for everyday wear."},
+{id:4,name:"Women's Handbag",cat:"Fashion",price:15000,old:22000,e:"👜",bg:"#fce7f3",k:"handbag",r:4.5,stock:10,opts:["Brown","Black","Red"],d:"Stylish leather-look handbag with zip compartments."},
+{id:5,name:"Laptop 14-inch 8GB/256GB",cat:"Computing",price:320000,old:390000,e:"💻",bg:"#e0f2fe",k:"laptop",r:4.5,stock:5,opts:["Silver","Grey"],d:"Fast SSD, full HD display, perfect for work and school."},
+{id:6,name:"Smart Watch",cat:"Electronics",price:22000,old:35000,e:"⌚",bg:"#dcfce7",k:"smartwatch",r:3.5,stock:20,opts:["Black","Pink"],d:"Heart-rate monitor, step counter, message alerts."},
+{id:7,name:"Blender 1.5L",cat:"Home",price:28000,old:36000,e:"🍹",bg:"#fef3c7",k:"blender",r:4,stock:12,opts:[],d:"Powerful 500W blender for smoothies, soups and more."},
+{id:8,name:"Office Chair",cat:"Home",price:45000,old:60000,e:"🪑",bg:"#e7e5e4",k:"office,chair",r:4,stock:6,opts:["Black","Grey"],d:"Ergonomic chair with adjustable height and back support."},
+{id:9,name:"Rice 50kg Bag",cat:"Groceries",price:78000,old:90000,e:"🍚",bg:"#fef9c3",k:"rice",r:4.5,stock:30,opts:[],d:"Premium long-grain parboiled rice."},
+{id:10,name:"Vegetable Oil 5L",cat:"Groceries",price:11500,old:14000,e:"🛢️",bg:"#ecfccb",k:"cooking,oil",r:4,stock:40,opts:[],d:"Pure, cholesterol-free vegetable cooking oil."},
+{id:11,name:"Gaming Console",cat:"Computing",price:290000,old:340000,e:"🎮",bg:"#ddd6fe",k:"game,console",r:5,stock:4,opts:["With 1 pad","With 2 pads"],d:"Next-gen console with 4K gaming and fast loading."},
+{id:12,name:"Men's T-Shirt Pack (3)",cat:"Fashion",price:9000,old:15000,e:"👕",bg:"#ffedd5",k:"tshirt",r:3.5,stock:50,opts:["S","M","L","XL"],d:"Soft 100% cotton round-neck shirts, pack of three."}
+];
+const CATS=["All","Phones","Electronics","Computing","Fashion","Home","Groceries"];
+const SLIDES=[["#f68b1e,#d11","Leo Mega Sale","Up to 50% off top deals"],["#2563eb,#7c3aed","Free Delivery","On orders above ₦50,000"],["#059669,#0891b2","Use LEO10","Get 10% off your order"]];
+/* Demo tracking: one stage per minute. With a real backend, stages would come from your server. */
+const STEPS=[["Order placed","We received your order."],["Confirmed","The seller is preparing your items."],["Shipped","Your package has left our warehouse."],["Out for delivery","A rider is on the way to you."],["Delivered","Package delivered. Enjoy!"]];
+
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const src=(p,n)=>p.img?p.img:"https://loremflickr.com/500/500/"+p.k+"?lock="+(p.id*10+(n||0));
+const im=(p,n)=>`<img src="${src(p,n)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none'">`;
+
+const ls=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+let cart=ls("leo_cart",[]),wish=ls("leo_wish",[]),orders=ls("leo_orders",[]),user=ls("leo_user",null);
+let notes=ls("leo_notes",[]),inbox=ls("leo_inbox",[]);
+let coupon=null,cat="All",cur=null,trackId=null,swReg=null,deferred=null;
+const save=()=>{try{localStorage.setItem("leo_cart",JSON.stringify(cart));localStorage.setItem("leo_wish",JSON.stringify(wish));localStorage.setItem("leo_orders",JSON.stringify(orders));localStorage.setItem("leo_user",JSON.stringify(user))}catch(e){}};
+const $=s=>document.querySelector(s);
+const fmt=n=>"₦"+Math.round(n).toLocaleString();
+const stars=r=>"★".repeat(Math.round(r))+"☆".repeat(5-Math.round(r));
+const disc=p=>Math.round((1-p.price/p.old)*100);
+function toast(m){const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display="none",2200)}
+
+/* ---- Footer contact ---- */
+$("#fc").innerHTML=`<a class="fl" href="tel:${CONFIG.phone.replace(/\s/g,"")}">📞 ${esc(CONFIG.phone)}</a>
+<a class="fl" href="https://wa.me/${CONFIG.whatsapp}" target="_blank" rel="noopener">💬 WhatsApp us</a>
+<a class="fl" href="mailto:${CONFIG.email}">✉️ ${esc(CONFIG.email)}</a>
+<span class="fl">🕒 ${esc(CONFIG.hours)}</span><span class="fl">📍 ${esc(CONFIG.address)}</span>`;
+$("#copy").textContent="© "+new Date().getFullYear()+" Leo Online Mall. All rights reserved.";
+
+/* ---- Banner & countdown ---- */
+$("#banner").innerHTML=SLIDES.map((s,i)=>`<div class="slide${i?"":" on"}" style="background:linear-gradient(135deg,${s[0]})"><h2>${s[1]}</h2><div>${s[2]}</div></div>`).join("");
+let si=0;setInterval(()=>{const a=document.querySelectorAll(".slide");a[si].classList.remove("on");si=(si+1)%a.length;a[si].classList.add("on")},3500);
+function tick(){const n=new Date(),e=new Date(n);e.setHours(23,59,59,999);let s=Math.floor((e-n)/1000);const p=x=>String(x).padStart(2,"0");$("#cd").textContent=p(Math.floor(s/3600))+":"+p(Math.floor(s%3600/60))+":"+p(s%60)}
+tick();setInterval(tick,1000);
+
+/* ---- Categories & grid ---- */
+function renderCats(){$("#cats").innerHTML=CATS.map(c=>`<button class="${c===cat?"on":""}" onclick="cat='${c}';render()">${c}</button>`).join("")}
+function card(p){return `<div class="card"><button class="heart" onclick="tw(${p.id})">${wish.includes(p.id)?"❤️":"🤍"}</button><div class="pic" onclick="openP(${p.id})" style="background:${p.bg}">${p.e}${im(p)}<span class="off">-${disc(p)}%</span></div><div class="info"><div class="nm">${p.name}</div><div class="pr">${fmt(p.price)}</div><s>${fmt(p.old)}</s><div class="st">${stars(p.r)}</div><button class="btn" onclick="add(${p.id})">Add to cart</button></div></div>`}
+function render(){
+  renderCats();
+  const q=$("#q").value.toLowerCase().trim(),s=$("#sort").value;
+  let l=P.filter(p=>(cat==="All"||p.cat===cat)&&p.name.toLowerCase().includes(q));
+  if(s==="lo")l.sort((a,b)=>a.price-b.price);
+  if(s==="hi")l.sort((a,b)=>b.price-a.price);
+  if(s==="rt")l.sort((a,b)=>b.r-a.r);
+  if(s==="dc")l.sort((a,b)=>disc(b)-disc(a));
+  $("#count").textContent=l.length+" products";
+  $("#grid").innerHTML=l.length?l.map(card).join(""):'<p class="mut">No products found.</p>';
+  $("#cc").textContent=cart.reduce((n,c)=>n+c.qty,0);
+  $("#wc").textContent=wish.length;
+}
+$("#q").oninput=render;$("#sort").onchange=render;
+function refresh(){render();if(cur)cur()}
+
+/* ---- Sheet helper ---- */
+function show(t,h,fn){cur=fn;trackId=null;$("#pt").textContent=t;$("#pb").innerHTML=h;$("#ov").classList.add("show")}
+function closeP(){cur=null;trackId=null;$("#ov").classList.remove("show")}
+const sheetIs=t=>$("#ov").classList.contains("show")&&$("#pt").textContent===t;
+
+/* ---- Product page ---- */
+function openP(id){
+  const p=P.find(x=>x.id===id);if(!p)return;
+  const o=p.opts.length?`<label class="mut">Option</label><select id="opt" style="width:100%;margin:4px 0 10px">${p.opts.map(x=>`<option>${x}</option>`).join("")}</select>`:"";
+  const thumbs=p.img?"":`<div class="thumbs">${[0,1,2].map(n=>`<img src="${src(p,n)}" alt="${esc(p.name)}" onclick="document.getElementById('mi').src=this.src" onerror="this.style.display='none'">`).join("")}</div>`;
+  show(p.name,`<div class="big-e" style="background:${p.bg}">${p.e}<img id="mi" src="${src(p,0)}" alt="${esc(p.name)}" onerror="this.style.display='none'"></div>${thumbs}
+  <div class="pr" style="font-size:22px">${fmt(p.price)} <s>${fmt(p.old)}</s> <span class="tag">-${disc(p)}%</span></div>
+  <div class="st">${stars(p.r)} (${p.r})</div>
+  <p>${p.d}</p><p class="mut">${p.stock<=5?"⚠️ Only "+p.stock+" left!":"✅ In stock"} · Category: ${p.cat}</p>${o}
+  <button class="btn big" onclick="add(${p.id},document.getElementById('opt')?.value)">Add to cart</button>
+  <button class="btn alt big" onclick="tw(${p.id})">${wish.includes(p.id)?"Remove from wishlist":"Add to wishlist"}</button>
+  <h4>Similar products</h4><div class="grid" style="grid-template-columns:repeat(2,1fr)">${P.filter(x=>x.cat===p.cat&&x.id!==p.id).slice(0,2).map(card).join("")||'<p class="mut">None</p>'}</div>`,null);
+}
+
+/* ---- Wishlist ---- */
+function tw(id){wish=wish.includes(id)?wish.filter(x=>x!==id):[...wish,id];save();refresh()}
+function openWish(){show("Wishlist ❤️",wish.length?`<div class="grid">${wish.map(id=>card(P.find(p=>p.id===id))).join("")}</div>`:'<p class="mut">No saved items yet.</p>',openWish)}
+
+/* ---- Cart ---- */
+const items=()=>cart.map(c=>({...P.find(p=>p.id===c.id),...c}));
+function sums(){const sub=items().reduce((n,c)=>n+c.price*c.qty,0),d=coupon?sub*.1:0,ship=(!sub||sub-d>=50000)?0:1500;return{sub,d,ship,total:sub-d+ship}}
+function add(id,opt){
+  const p=P.find(x=>x.id===id);opt=opt||p.opts[0]||"";
+  const f=cart.find(c=>c.id===id&&c.opt===opt);
+  if(f){if(f.qty>=p.stock)return toast("No more stock");f.qty++}else cart.push({id,opt,qty:1});
+  save();toast("Added to cart 🛒");refresh();
+}
+function qt(i,d){const c=cart[i],p=P.find(x=>x.id===c.id);c.qty+=d;if(c.qty>p.stock){c.qty=p.stock;toast("Max stock reached")}if(c.qty<1)cart.splice(i,1);save();refresh()}
+function rm(i){cart.splice(i,1);save();refresh()}
+function applyC(){const v=$("#cpn").value.trim().toUpperCase();if(v==="LEO10"){coupon=v;toast("10% voucher applied 🎉")}else toast("Invalid voucher");refresh()}
+function openCart(){
+  const it=items();let h;
+  if(!it.length)h='<p class="mut">Your cart is empty.</p>';
+  else{const s=sums();
+    h=it.map((c,i)=>`<div class="row"><div class="th" style="background:${c.bg}">${c.e}${im(c)}</div><div class="g"><b>${c.name}</b><div class="mut">${c.opt}</div><div>${fmt(c.price)}</div><div class="qty"><button onclick="qt(${i},-1)">−</button><span>${c.qty}</span><button onclick="qt(${i},1)">+</button><button onclick="rm(${i})">🗑</button></div></div></div>`).join("")+
+    `<div class="tot"><div><span>Subtotal</span><span>${fmt(s.sub)}</span></div>${coupon?`<div><span>Voucher (${coupon})</span><span>-${fmt(s.d)}</span></div>`:""}<div><span>Delivery</span><span>${s.ship?fmt(s.ship):"FREE"}</span></div><div><b>Total</b><b>${fmt(s.total)}</b></div></div>
+    <div class="cp"><input id="cpn" placeholder="Voucher code (try LEO10)"><button class="btn" onclick="applyC()">Apply</button></div>
+    <button class="btn big" onclick="openCheckout()">Checkout</button>`}
+  show("Cart 🛒",h,openCart);
+}
+
+/* ---- Checkout ---- */
+function openCheckout(){
+  if(!user){toast("Please log in first");return openAcct()}
+  const s=sums();
+  show("Checkout",`<div class="f"><input id="cn" placeholder="Full name" value="${esc(user.name)}"><input id="cph" placeholder="Phone number" type="tel"><input id="ca" placeholder="Delivery address"><select id="cpay"><option>Pay on delivery</option><option>Card</option><option>Mobile money</option><option>Bank transfer</option></select></div>
+  <div class="tot"><div><b>Total to pay</b><b>${fmt(s.total)}</b></div></div>
+  <button class="btn big" onclick="place()">Place order</button>
+  <button class="btn alt big" onclick="openCart()">Back to cart</button>`,null);
+}
+function place(){
+  const n=$("#cn").value.trim(),ph=$("#cph").value.trim(),a=$("#ca").value.trim();
+  if(!n||!ph||!a)return toast("Fill in all details");
+  const s=sums(),oid="#"+String(Date.now()).slice(-6);
+  orders.unshift({id:oid,t:Date.now(),s:0,total:s.total,pay:$("#cpay").value,addr:a,phone:ph,items:items().map(c=>c.e+" "+c.name+" x"+c.qty)});
+  cart=[];coupon=null;save();render();
+  addMsg("sys","Order "+oid+" placed ✅ We received your order of "+fmt(s.total)+". Updates will appear here.",oid);
+  phoneNotify("Order "+oid+" placed ✅","We received your order of "+fmt(s.total)+".");
+  toast("Order placed ✅");openTrack(oid);
+}
+
+/* ---- Order tracking ---- */
+const step=o=>Math.min(4,Math.floor((Date.now()-o.t)/60000));
+const hhmm=t=>new Date(t).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+function openTrack(raw){
+  raw=raw||"";
+  const mine=orders.map(o=>`<div class="ord" style="cursor:pointer" onclick="openTrack('${o.id}')"><b>${o.id}</b> · ${STEPS[step(o)][0]}<br><span class="mut">${new Date(o.t).toLocaleString()} · ${fmt(o.total)}</span></div>`).join("");
+  let res="",found=null;
+  if(raw){
+    const id="#"+String(raw).replace("#","").trim();
+    found=orders.find(x=>x.id===id);
+    if(!found)res='<p class="mut">No order found with that ID on this device. Check the ID and try again.</p>';
+    else{
+      const s=step(found);
+      res=`<div class="ord"><b>${found.id}</b> · ${fmt(found.total)}<br>${found.items.join("<br>")}<br><span class="mut">Deliver to: ${esc(found.addr)}<br>Payment: ${esc(found.pay)}</span></div>
+      <ul class="tl">${STEPS.map((x,i)=>`<li class="${i<=s?"done":""} ${i===s?"now":""}"><b>${x[0]}</b><small>${i<=s?hhmm(found.t+i*60000)+" · "+x[1]:x[1]}</small></li>`).join("")}</ul>
+      <button class="btn alt" onclick="openHelp()">Need help with this order?</button>`;
+    }
+  }
+  show("Track Order 📦",`<div class="cp"><input id="tid" placeholder="Enter order ID e.g. 123456" value="${esc(raw)}"><button class="btn" onclick="openTrack(document.getElementById('tid').value)">Track</button></div>${res}<h4>My orders</h4>${mine||'<p class="mut">No orders yet.</p>'}`,null);
+  if(found)trackId=found.id;
+}
+function checkOrders(){
+  let ch=false;
+  orders.forEach(o=>{
+    const c=step(o);
+    if(o.s===undefined){o.s=c;ch=true;return}
+    if(c>o.s){
+      o.s=c;ch=true;
+      addMsg("sys","Order "+o.id+" · "+STEPS[c][0]+". "+STEPS[c][1],o.id);
+      phoneNotify("Order "+o.id+" · "+STEPS[c][0],STEPS[c][1]);
+    }
+  });
+  if(ch)save();
+  if(trackId&&sheetIs("Track Order 📦"))openTrack(trackId);
+}
+setInterval(checkOrders,10000);
+
+/* ---- Account & orders ---- */
+function login(){
+  const n=$("#un").value.trim(),e=$("#ue").value.trim();
+  if(!n||!e.includes("@"))return toast("Enter name and valid email");
+  user={name:n,email:e};save();toast("Welcome, "+n+"!");openAcct();
+}
+function logout(){user=null;save();openAcct()}
+function openAcct(){
+  let h=user?`<p>👋 <b>${esc(user.name)}</b><br><span class="mut">${esc(user.email)}</span></p><button class="btn alt" onclick="logout()">Log out</button>`
+  :`<p class="mut">Log in or sign up (demo, saved on this device only).</p><div class="f"><input id="un" placeholder="Your name"><input id="ue" type="email" placeholder="Email"></div><button class="btn big" onclick="login()">Continue</button>`;
+  h+=`<h4>My orders</h4>`+(orders.length?orders.map(o=>`<div class="ord"><b>${o.id}</b> · ${STEPS[step(o)][0]}<br>${o.items.join("<br>")}<br><span class="mut">${new Date(o.t).toLocaleString()} · ${esc(o.pay)}</span><br><b>${fmt(o.total)}</b><button class="btn" onclick="openTrack('${o.id}')">📦 Track order</button></div>`).join(""):'<p class="mut">No orders yet.</p>');
+  show("My Account",h,null);
+}
+
+/* ---- Help, contact & info pages ---- */
+function openHelp(){
+  const tel=CONFIG.phone.replace(/\s/g,"");
+  show("Help & Contact 💬",`<p class="mut">Our team is available ${esc(CONFIG.hours)}.</p>
+  <a class="btn big lnk" href="tel:${tel}">📞 Call ${esc(CONFIG.phone)}</a>
+  <a class="btn big lnk" style="background:#25a244" href="https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hello Leo Online Mall, I need help.")}" target="_blank" rel="noopener">💬 Chat on WhatsApp</a>
+  <a class="btn big lnk" style="background:#2563eb" href="mailto:${CONFIG.email}">✉️ Email ${esc(CONFIG.email)}</a>
+  <button class="btn alt big" onclick="openInbox()">📩 Message us in the app</button>
+  <button class="btn alt big" onclick="openTrack()">📦 Track my order</button>
+  <h4>Frequently asked questions</h4>
+  <details><summary>How do I track my order?</summary><p>Tap Track Order at the top, then enter your order ID or pick it from your list.</p></details>
+  <details><summary>How long does delivery take?</summary><p>Usually 1–5 working days depending on your location. Orders above ₦50,000 ship free.</p></details>
+  <details><summary>How do I return an item?</summary><p>Contact us within 7 days with your order ID. Items must be unused and in original packaging.</p></details>
+  <details><summary>Which payment methods are accepted?</summary><p>Pay on delivery, card, mobile money and bank transfer.</p></details>
+  <details><summary>How do I use a voucher?</summary><p>Open your cart, type the code (for example LEO10) and tap Apply.</p></details>`,null);
+}
+function info(k){
+  const T={
+   about:["Who we are","Leo Online Mall is your one-stop shop for phones, fashion, electronics, home items and groceries, delivered to your door."],
+   delivery:["Delivery Info","Orders above ₦50,000 ship free. Smaller orders pay ₦1,500. Delivery takes 1–5 working days depending on your location."],
+   returns:["Returns & Refunds","Return eligible items within 7 days if they are unused and in original packaging. Contact customer service with your order ID to start a return. Refunds are processed within 5–7 working days."],
+   payment:["Payment Options","We accept pay on delivery, card, mobile money and bank transfer."],
+   sell:["Sell on Leo Mall","Want to sell on Leo Online Mall? Email "+CONFIG.email+" with your business details and we will get back to you."]
+  }[k];
+  show(T[0],`<p>${esc(T[1])}</p><button class="btn big" onclick="openHelp()">💬 Contact customer service</button>`,null);
+}
+
+/* ---- Inbox (messages) ---- */
+const inboxOpen=()=>sheetIs("Inbox 📩");
+function saveInbox(){try{localStorage.setItem("leo_inbox",JSON.stringify(inbox.slice(-60)))}catch(e){}}
+function addMsg(w,text,oid){
+  inbox.push({w,text,oid:oid||null,t:Date.now(),read:w==="me"||inboxOpen()});
+  inbox=inbox.slice(-60);saveInbox();
+  if(inboxOpen())drawThread();
+  updateBadge();
+}
+function drawThread(){
+  const t=$("#thread");if(!t)return;
+  t.innerHTML=inbox.length?inbox.map(m=>`<div class="bub ${m.w}">${esc(m.text)}${m.oid?`<br><button onclick="openTrack('${m.oid}')">📦 Track order</button>`:""}<small>${m.w==="me"?"You":m.w==="sup"?"Leo Support":"Leo Mall"} · ${new Date(m.t).toLocaleString()}</small></div>`).join(""):'<p class="mut">No messages yet.</p>';
+  t.scrollTop=t.scrollHeight;
+}
+function openInbox(){
+  show("Inbox 📩",`<div id="thread"></div>
+  <div class="chips"><button onclick="quick('Where is my order?')">Where is my order?</button><button onclick="quick('I want to return an item')">Return an item</button><button onclick="quick('I have a payment problem')">Payment problem</button></div>
+  <div class="cp"><input id="mtxt" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMsg()"><button class="btn" onclick="sendMsg()">Send</button></div>`,null);
+  inbox.forEach(m=>m.read=true);saveInbox();updateBadge();drawThread();
+}
+function quick(t){$("#mtxt").value=t;sendMsg()}
+function autoReply(t){
+  const ref="Ticket #"+String(Date.now()).slice(-5)+". ";
+  if(/order|track|deliver|ship/i.test(t))return ref+"Thanks for reaching out! You can follow your package from 📦 Track Order. If it is delayed, send us your order ID and we will check it.";
+  if(/return|refund/i.test(t))return ref+"Sorry to hear that. Items can be returned within 7 days if unused. Please send your order ID and the reason for the return.";
+  if(/pay|card|money|transfer/i.test(t))return ref+"We are sorry about the payment trouble. Please send your order ID and the payment method you used so we can help.";
+  return ref+"Thanks for contacting Leo Customer Service. An agent will reply within 24 hours. You can also call or WhatsApp us from Help & Contact.";
+}
+function sendMsg(){
+  const inp=$("#mtxt"),t=inp.value.trim();if(!t)return;
+  inp.value="";addMsg("me",t);
+  setTimeout(()=>{const r=autoReply(t);addMsg("sup",r);phoneNotify("Leo Customer Service",r.slice(0,90))},1500);
+}
+
+/* ===== Notifications (bell), app badge & install ===== */
+const mkIcon=s=>{const c=document.createElement("canvas");c.width=c.height=s;const x=c.getContext("2d");x.fillStyle="#f68b1e";x.fillRect(0,0,s,s);x.fillStyle="#fff";x.font="bold "+Math.round(s*.6)+"px system-ui";x.textAlign="center";x.textBaseline="middle";x.fillText("L",s/2,s*.54);return c.toDataURL("image/png")};
+const ICON=mkIcon(192);
+try{
+ const base=new URL("./",location.href).href,i512=mkIcon(512);
+ const man={name:"Leo Online Mall",short_name:"Leo Mall",id:base,start_url:base,scope:base,display:"standalone",background_color:"#ffffff",theme_color:"#f68b1e",
+  icons:[{src:ICON,sizes:"192x192",type:"image/png",purpose:"any"},{src:i512,sizes:"512x512",type:"image/png",purpose:"any"}]};
+ const m=document.createElement("link");m.rel="manifest";
+ m.href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:"application/manifest+json"}));
+ document.head.appendChild(m);
+ const a=document.createElement("link");a.rel="apple-touch-icon";a.href=ICON;document.head.appendChild(a);
+}catch(e){}
+
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const setDot=(s,n)=>{const d=$(s);d.style.display=n?"flex":"none";d.textContent=n>9?"9+":n};
+function updateBadge(){
+ const un=notes.filter(n=>!n.read).length,ui=inbox.filter(m=>!m.read).length;
+ setDot("#nd",un);setDot("#md",ui);
+ try{const t=un+ui;if(navigator.setAppBadge){t?navigator.setAppBadge(t):navigator.clearAppBadge()}}catch(e){}
+}
+function saveNotes(){try{localStorage.setItem("leo_notes",JSON.stringify(notes.slice(0,30)))}catch(e){}}
+function phoneNotify(title,body,pid){
+ if("Notification" in window&&Notification.permission==="granted"&&swReg){
+  swReg.showNotification(title,{body,icon:ICON,badge:ICON,tag:"leo-"+Date.now(),data:{pid}}).catch(()=>{});
+ }
+}
+function pushNote(title,body,pid){
+ notes.unshift({title,body,pid,t:Date.now(),read:false});saveNotes();updateBadge();
+ phoneNotify(title,body,pid);
+}
+function openNotes(){
+ const perm="Notification" in window?Notification.permission:"unsupported";
+ let h="";
+ if(perm==="default")h+=`<button class="btn" onclick="askPerm()">🔔 Turn on phone notifications</button>`;
+ else if(perm==="denied")h+=`<p class="mut">Notifications are blocked. Allow them in your browser's site settings.</p>`;
+ else if(perm==="unsupported")h+=`<p class="mut">Notifications aren't supported here. On iPhone, add the app to your Home Screen first.</p>`;
+ if(!isStandalone())h+=`<button class="btn alt big" onclick="installApp()">📲 Install app</button>`;
+ h+=notes.length?notes.map(n=>`<div class="ord" ${n.pid?`onclick="openP(${n.pid})" style="cursor:pointer"`:""}><b>${esc(n.title)}</b><br>${esc(n.body)}<br><span class="mut">${new Date(n.t).toLocaleString()}</span></div>`).join(""):'<p class="mut">No notifications yet.</p>';
+ show("Notifications 🔔",h,null);
+ notes.forEach(n=>n.read=true);saveNotes();updateBadge();
+}
+async function askPerm(){
+ try{
+  const r=await Notification.requestPermission();
+  toast(r==="granted"?"Notifications on ✅":"Notifications not allowed");
+  if(r==="granted")pushNote("Notifications are on 🎉","You'll get deals and order updates here.");
+ }catch(e){toast("Not supported here")}
+ openNotes();
+}
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e});
+async function installApp(){
+ if(deferred){deferred.prompt();try{await deferred.userChoice}catch(_){}deferred=null}
+ else if(/iphone|ipad|ipod/i.test(navigator.userAgent))alert("On iPhone: open in Safari, tap Share, then 'Add to Home Screen'.");
+ else alert("Open your browser menu (⋮) and tap 'Install app' or 'Add to Home screen'.");
+}
+if("serviceWorker" in navigator&&location.protocol!=="file:"){
+ navigator.serviceWorker.register("sw.js").then(()=>navigator.serviceWorker.ready).then(r=>{swReg=r}).catch(()=>{});
+ navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.pid)openP(e.data.pid)});
+}
+const hm=location.hash.match(/^#p(\d+)/);if(hm)setTimeout(()=>openP(+hm[1]),300);
+
+/* Demo deal alerts while the app is open. Delete these 3 lines when you connect a real push service. */
+function dealNote(){const p=P[Math.floor(Math.random()*P.length)];pushNote("⚡ Flash deal: "+p.name,"Now "+fmt(p.price)+" ("+disc(p)+"% off). Tap to view.",p.id)}
+if(!notes.length)pushNote("Welcome to Leo Online Mall 🛍️","Use code LEO10 for 10% off your first order.");
+if(!inbox.length)addMsg("sup","Welcome to Leo Online Mall! 👋 Ask us anything about orders, deliveries or returns.");
+setTimeout(dealNote,20000);setInterval(dealNote,120000);
+checkOrders();updateBadge();
+
+render();
+</script>
+</body>
+</html>
